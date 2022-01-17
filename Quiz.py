@@ -62,6 +62,7 @@ class Quiz:
 		user_name = StringVar()
 		ip_address = StringVar()
 		port = IntVar()
+		passwd = StringVar()
 
 		menu_frame = Frame(self.canvas,bg="white")
 		menu_frame.place(relwidth=0.8,relheight=0.8,relx=0.1,rely=0.1)
@@ -91,12 +92,19 @@ class Quiz:
 		portname.config(width=42)
 		portname.place(relx=0.31,rely=0.6)
 
-		log = Button(menu_frame,text='Připojit se na server',padx=5,pady=5,width=5, command= lambda: self.connect(user_name.get(), portname.get(), ipname.get()))
+		#heslo
+		passlabel = Label(menu_frame,text="Heslo",fg='black',bg='white')
+		passlabel.place(relx=0.21,rely=0.7)
+		passname = Entry(menu_frame,bg='#d3d3d3',fg='black',textvariable = passwd)
+		passname.config(width=42)
+		passname.place(relx=0.31,rely=0.7)
+
+		log = Button(menu_frame,text='Připojit se na server',padx=5,pady=5,width=5, command= lambda: self.connect(user_name.get(), portname.get(), ipname.get(), passname.get()))
 		log.configure(width = 15,height=1, activebackground = "#33B5E5", relief = FLAT)
-		log.place(relx=0.4,rely=0.7)
+		log.place(relx=0.5,rely=0.9)
 
 
-	def connect(self, name, portname, ipname):
+	def connect(self, name, portname, ipname, passname):
 		can = True
 		global round
 		if round == 0:
@@ -118,7 +126,7 @@ class Quiz:
 				
 		
 		if(can == True):
-			self.client.request_id_player(name)
+			self.client.request_id_player(name, passname)
 		
 
 
@@ -284,7 +292,8 @@ class Quiz:
 		"""
 		self.client.run_ping = False
 		self.client.leave_game()
-		self.client.soc.close()
+		if(self.client.soc != None):
+			self.client.soc.close()
 		self.gui.destroy()
 		self.gui.quit()
 

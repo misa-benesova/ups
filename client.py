@@ -32,7 +32,6 @@ class Client:
     def end_threads(self):
         self.run_recieve = False
         self.run_ping = False
-        self.thread_ping.join()
         self.soc.close()
 
     def connect(self, port, ipname):
@@ -120,12 +119,14 @@ class Client:
         else:
             print('Maximální počet hráčů ve hře')
 
+
 #-----------------------------------------------------
 
-    def request_id_player(self, name):
+    def request_id_player(self, name, passname):
         """Žádá server o přiřazení id hráče
         """
-        self.send_msg(str(REQ_ID), name)
+        sendingmsg = name + "+" + passname
+        self.send_msg(str(REQ_ID), sendingmsg)
 
     def set_player_id(self, id):
         if id == None or id == -1:
