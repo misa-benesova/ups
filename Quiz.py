@@ -8,7 +8,7 @@ from tkinter import *
 from tkinter import messagebox
 from client import Client
 import threading
-import sys
+import os
 
 class Quiz:
 	global round
@@ -31,6 +31,8 @@ class Quiz:
 
 		# vytvoření jednotlivých labelů a tlačítek
 		self.right_btn = Button()
+		
+		self.thread = None
 
 		self.text_points = Text()
 		self.text_points = " "
@@ -119,8 +121,8 @@ class Quiz:
 					can = False	
 
 			if can == True and self.client.connect(portname, ipname):
-				thread = threading.Thread(target=self.client.recieve_from_server)
-				thread.start()
+				self.thread = threading.Thread(target=self.client.recieve_from_server)
+				self.thread.start()
 			else:
 				can = False
 				
@@ -185,7 +187,7 @@ class Quiz:
 			else:
 				text_wait_to_start = Text()
 				text_wait_to_start.pack()
-				text_wait_to_start = "A teď počkej na zahájení hry adminem."
+				text_wait_to_start = "počkej na start"
 				wait_to_start_label = Label(display_room_frame,text=text_wait_to_start,fg='black',bg='white', font=('ariel' ,16, 'bold'))
 				wait_to_start_label.place(relx=0.4,rely=0.53)
 				
@@ -212,7 +214,7 @@ class Quiz:
 		question_text = Text()
 		question_text.pack()
 		question_text = question
-		question_label = Label(show_q_frame,text=question_text,fg='black',bg='white', font=('Comic Sans MS' ,16, 'bold'))
+		question_label = Label(show_q_frame,text=question_text,fg='black',bg='white', font=('calibri' ,16, 'bold'))
 		question_label.place(relx=0.3,rely=0.15)
 
 
@@ -294,8 +296,11 @@ class Quiz:
 		self.client.leave_game()
 		if(self.client.soc != None):
 			self.client.soc.close()
+		
 		self.gui.destroy()
 		self.gui.quit()
+		
+		os._exit(0)
 
 	def radio_buttons(self):
 		""" Tlačítka ve stylu radio pro odpovědi.
